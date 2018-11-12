@@ -110,59 +110,46 @@
       onConnected() {
         this.getAssets();
       },
-      getCallPositions() {
+      async getCallPositions() {
         if (!this.asset_id) return;
 
-        this.chain.getCallOrders(this.asset_id)
-          .then(calls => this.callPositions = calls)
-          .catch(o => console.error(o))
-          .finally(() => {
-            this.finish_loading();
-          });
+        this.callPositions = await this.chain.getCallOrders(this.asset_id)
+          .catch(o => console.error(o));
+        this.finish_loading();
       },
-      getBackingAsset() {
+      async getBackingAsset() {
         if (!this.asset) return;
 
-        this.chain.getObjects([this.asset.bitasset_data_id])
-          .then((c) => {
-            c = c[0];
-            this.asset_bitasset_data = c;
-            this.collateral_asset_id = c.options.short_backing_asset;
-            this.chain.getObjects([this.collateral_asset_id])
-              .then((d) => {
-                this.collateral_asset = d[0];
-                this.getCallPositions();
-                this.getTicker();
-              })
-              .catch(o => console.error(o))
-              .finally(() => {
-                this.finish_loading();
-              });
-          })
+        let c = await this.chain.getObjects([this.asset.bitasset_data_id])
           .catch(o => console.error(o));
+        c = c[0];
+        this.asset_bitasset_data = c;
+        this.collateral_asset_id = c.options.short_backing_asset;
+
+        let d = await this.chain.getObjects([this.collateral_asset_id])
+          .catch(o => console.error(o));
+        this.collateral_asset = d[0];
+        this.getCallPositions();
+        this.getTicker();
+        this.finish_loading();
       },
-      getTicker() {
+      async getTicker() {
         if (!this.asset_id) return;
         if (!this.collateral_asset_id) return;
-        this.chain.getTicker(
+        this.ticker = await this.chain.getTicker(
           this.asset_id,
           this.collateral_asset_id
         )
-          .then(ticker => this.ticker = ticker)
-          .catch(o => console.error(o))
-          .finally(() => {
-            this.finish_loading();
-          });
+          .catch(o => console.error(o));
+        this.finish_loading();
       },
-      getAssets() {
-        this.chain.getAssetFromSymbols([this.symbol])
-          .then(o => {
-            o = o[0];
-            this.asset = o;
-            this.asset_id = o.id;
-            this.getBackingAsset();
-          })
-          .catch(o => console.error(o))
+      async getAssets() {
+        let o = await this.chain.getAssetFromSymbols([this.symbol])
+          .catch((err) => { console.log(err); });
+        o = o[0];
+        this.asset = o;
+        this.asset_id = o.id;
+        this.getBackingAsset();
       },
     }
   }
