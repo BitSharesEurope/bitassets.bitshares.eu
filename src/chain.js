@@ -97,6 +97,10 @@ class Blockchain {
     return this.db_exec("get_ticker", [a, b]);
   }
 
+  getCollateralBids(asset_id) {
+    return this.db_exec("get_collateral_bids", [asset_id, 100, 0]);
+  }
+
 }
 
 const chain = new Blockchain();
