@@ -1,45 +1,48 @@
 <template>
-  <div v-if="is_loaded()">
+ <div v-if="is_loaded()">
+  <div class="ui two column grid">
+   <div class="column">
     <CallPositionsOverview
-      :callPositions="callPositions"
-      :asset="asset"
-      :collateral_asset="collateral_asset"
-      :ticker="ticker"
-      :settlementPrice=settlementPrice
-    />
-    <v-container grid-list-md text-xs-center>
-      <v-layout row wrap>
-        <v-flex xs4>
-          <CallPositionsChartRatios
-            :callPositions="callPositions"
-            :asset="asset"
-            :collateral_asset="collateral_asset"
-            :settlementPrice=settlementPrice
-          />
-        </v-flex>
-        <v-flex xs4>
-          <CallPositionsChartRatioVsAmount
-            :callPositions="callPositions"
-            :asset="asset"
-            :collateral_asset="collateral_asset"
-            :settlementPrice=settlementPrice
-          />
-        </v-flex>
-        <v-flex xs4>
-          <CallPositionsChartRatioVsAmountCDF
-            :callPositions="callPositions"
-            :asset="asset"
-            :collateral_asset="collateral_asset"
-            :settlementPrice=settlementPrice
-          />
-        </v-flex>
-      </v-layout>
-    </v-container>
+     :callPositions="callPositions"
+     :asset="asset"
+     :collateral_asset="collateral_asset"
+     :ticker="ticker"
+     :settlementPrice=settlementPrice
+     />
+   </div>
+   <div class="column">
+    <sui-tab>
+     <sui-tab-pane title="# vs. ratio">
+      <CallPositionsChartRatios
+       :callPositions="callPositions"
+       :asset="asset"
+       :collateral_asset="collateral_asset"
+       :settlementPrice=settlementPrice
+       />
+     </sui-tab-pane>
+     <sui-tab-pane title="Amount vs. ratio">
+      <CallPositionsChartRatioVsAmount
+       :callPositions="callPositions"
+       :asset="asset"
+       :collateral_asset="collateral_asset"
+       :settlementPrice=settlementPrice
+       />
+     </sui-tab-pane>
+     <sui-tab-pane title="CDF">
+      <CallPositionsChartRatioVsAmountCDF
+       :callPositions="callPositions"
+       :asset="asset"
+       :collateral_asset="collateral_asset"
+       :settlementPrice=settlementPrice
+       />
+     </sui-tab-pane>
+    </sui-tab>
+   </div>
   </div>
+ </div>
 </template>
 
 <script>
-  import BitSharesConnect from './BitSharesConnect'
   import CallPositionsOverview from './CallPositionsOverview'
   import CallPositionsChartRatioVsAmount from './CallPositionsChartRatioVsAmount'
   import CallPositionsChartRatioVsAmountCDF from './CallPositionsChartRatioVsAmountCDF'
@@ -48,8 +51,13 @@
 
   export default {
     name: 'Backing',
-    props: ["symbol"],
-    extends: BitSharesConnect,
+    props: [
+     "asset",
+     "collateral_asset",
+     "callPositions",
+     "ticker",
+     "asset_bitasset_data",
+    ],
     components: {
       CallPositionsChartRatioVsAmount,
       CallPositionsChartRatios,
@@ -58,13 +66,6 @@
     },
     data () {
       return {
-        callPositions: [],
-        ticker: null,
-        asset_id: "1.3.121",
-        asset: null,
-        collateral_asset_id: null,
-        collateral_asset: null,
-        asset_bitasset_data: null,
         chart_amount_vs_ratio: null,
         chart_amount_vs_ratio_labels: null,
         chart_amount_vs_ratio_cdf: null,
@@ -72,6 +73,9 @@
       };
     },
     computed: {
+      symbol() {
+       return this.asset.symbol;
+      },
       settlementPrice() {
         if (!this.asset_bitasset_data) return
         if (!this.asset) return;
@@ -80,25 +84,7 @@
         return (feed.base.amount * 10 ** this.collateral_asset.precision) / (feed.quote.amount * 10 ** this.asset.precision);
       },
     },
-    watch: { 
-      symbol: function(newVal, oldVal) { // watch it
-        console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-        this.$emit('loading', true);
-        this.reset();
-        this.getAssets();
-      }
-    },
     methods: {
-      finish_loading() {
-        if (this.is_loaded())
-          this.$emit('loading', false);
-      },
-      reset() {
-          this.asset = null
-          this.collateral_asset = null
-          this.ticker = null
-          this.asset_bitasset_data = null
-      },
       is_loaded() {
         return (
           this.asset &&
@@ -106,50 +92,6 @@
           this.ticker &&
           this.asset_bitasset_data
         );
-      },
-      onConnected() {
-        this.getAssets();
-      },
-      async getCallPositions() {
-        if (!this.asset_id) return;
-
-        this.callPositions = await this.chain.getCallOrders(this.asset_id)
-          .catch(o => console.error(o));
-        this.finish_loading();
-      },
-      async getBackingAsset() {
-        if (!this.asset) return;
-
-        let c = await this.chain.getObjects([this.asset.bitasset_data_id])
-          .catch(o => console.error(o));
-        c = c[0];
-        this.asset_bitasset_data = c;
-        this.collateral_asset_id = c.options.short_backing_asset;
-
-        let d = await this.chain.getObjects([this.collateral_asset_id])
-          .catch(o => console.error(o));
-        this.collateral_asset = d[0];
-        this.getCallPositions();
-        this.getTicker();
-        this.finish_loading();
-      },
-      async getTicker() {
-        if (!this.asset_id) return;
-        if (!this.collateral_asset_id) return;
-        this.ticker = await this.chain.getTicker(
-          this.asset_id,
-          this.collateral_asset_id
-        )
-          .catch(o => console.error(o));
-        this.finish_loading();
-      },
-      async getAssets() {
-        let o = await this.chain.getAssetFromSymbols([this.symbol])
-          .catch((err) => { console.log(err); });
-        o = o[0];
-        this.asset = o;
-        this.asset_id = o.id;
-        this.getBackingAsset();
       },
     }
   }

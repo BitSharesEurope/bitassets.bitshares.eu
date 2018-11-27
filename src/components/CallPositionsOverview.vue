@@ -1,14 +1,22 @@
 <template>
-  <v-card>
-    <v-list dense>
-      <template v-for="(item, index) in mainitems">
-        <v-list-tile :key="index">
-          <v-list-tile-content>{{item.name}}</v-list-tile-content>
-          <v-list-tile-content :key="item.name" class="align-end">{{ item.value }}</v-list-tile-content>
-        </v-list-tile>
-      </template>
-    </v-list>
-  </v-card>
+ <div>
+  <table class="ui compact selectable celled striped table">
+   <template v-for="(item, index) in mainitems">
+    <tr :key="index">
+     <td><strong>{{item.name}}</strong></td>
+     <td :key="item.name">{{ item.value }}</td>
+    </tr>
+   </template>
+  </table>
+  <div class="ui grid center aligned">
+   <div class="column">
+    <div class="ui green statistic">
+     <div class="value">{{this.averageRatio}}</div>
+     <div class="label">Overall Backing Ratio</div>
+    </div>
+   </div>
+  </div>
+ </div>
 </template>
 
 <script>
@@ -43,9 +51,6 @@
         }, {
           name: "Settlement Price",
           value: this.formatSettlementPrice
-        }, {
-          name: "Backing ratio",
-          value: this.averageRatio
         }];
       },
       totalCollateral() {

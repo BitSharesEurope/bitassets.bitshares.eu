@@ -12,14 +12,21 @@
      </div>
     </div>
     <div class="right menu">
-     <LoadingIndicator v-if="loading" :size=16 :width=3 />
+     <div class="item">
+      <div class="ui mini inline loader" :class="{'active': loading}"></div>
+     </div>
     </div>
    </div>
   </div>
   <div class="ui main container">
-   <div class="ui grid">
-    <div class="column">
-     <div class="row">
+   <div class="row">
+    <p>
+    All details are loaded directly from the Blockchain, no server sitting in
+    between. Please select the bitAsset you want to look more details about.
+    </p>
+    <div class="ui form">
+     <div class="field">
+      <label>bitAsset:</label>
       <sui-dropdown
        selection
        :options="dropdown_options"
@@ -29,10 +36,11 @@
        class="small"
        />
      </div>
-     <div class="row">
-      <CallPositions :symbol="symbol" v-on:loading="setLoading"/>
-     </div>
     </div>
+   </div>
+   <div class="ui horizontal divider"></div>
+   <div class="row">
+    <AssetSelected :symbol="symbol" v-on:loading="setLoading"/>
    </div>
   </div>
  </div>
@@ -40,13 +48,13 @@
 
 <script>
 import 'semantic-ui-css/semantic.min.css';
-import CallPositions from './components/CallPositions'
+import AssetSelected from './components/AssetSelected'
 import LoadingIndicator from './components/LoadingIndicator'
 
 export default {
   name: 'App',
   components: {
-    CallPositions,
+    AssetSelected,
     LoadingIndicator,
   },
   computed: {
@@ -57,8 +65,8 @@ export default {
   data () {
     return {
       loading: true,
-      symbol: "USD",
-      enabled_symbols: ["USD", "CNY", "EUR"]
+      symbol: "",
+      enabled_symbols: ["", "USD", "CNY", "EUR"]
     }
   },
   methods: {
@@ -71,41 +79,15 @@ export default {
 
 <style>
 body {
- background-color: #FFFFFF;
+ background-color: #fafafa;
 }
 .ui.menu .item img.logo {
  margin-right: 1.5em;
 }
 .main.container {
- margin-top: 7em;
- margin-bottom: 5em;
+ margin-top: 2em;
 }
-.ui.footer.segment {
- margin: 5em 0em 0em;
- padding: 5em 0em;
-}
-.header.branding img {
- height: 50px;
-}
-.ui.vertical.footer.segment {
- border: 0px;
-}
-
-/* Index
--------------------------------------------------- */
 .headlogo {
  height: 40px;
-}
-
-.tiny.text {
-   font-size: .8rem;
-}
-
-.mainlogo {
- margin-top: -80px;
-}
-
-.reglogo {
- height: 64px !important;
 }
 </style>
