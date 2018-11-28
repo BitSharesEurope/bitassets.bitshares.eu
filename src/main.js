@@ -10,7 +10,7 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   routes: [{
     path: '/:symbol',
     component: Asset,

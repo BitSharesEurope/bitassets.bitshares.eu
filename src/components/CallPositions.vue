@@ -85,6 +85,7 @@
       },
       settlementPrice() {
         if (!this.asset_bitasset_data) return
+        if (!this.asset_bitasset_data.current_feed) return
         if (!this.asset) return;
         if (!this.collateral_asset) return;
         let feed = this.asset_bitasset_data.current_feed.settlement_price;

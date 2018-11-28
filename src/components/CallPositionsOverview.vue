@@ -41,6 +41,7 @@
     props: ["callPositions", "asset", "collateral_asset", "ticker", "settlementPrice"],
     methods: {
       formatPrice(value, precision, currency) {
+        if (!currency) return
         var formatter = new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: currency,
@@ -51,6 +52,9 @@
       }
     },
     computed: {
+      symbol() {
+        return this.asset.symbol
+      },
       mainitems () {
         return [{
           name: "Collateral",

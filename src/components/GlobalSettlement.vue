@@ -123,6 +123,9 @@
       "collateral_bids",
     ],
     computed: {
+      symbol() {
+        return this.asset.symbol
+      },
       settlement_fund() {
         return this.asset_bitasset_data.settlement_fund / 10 ** this.collateral_asset.precision
       },
@@ -137,6 +140,7 @@
         return (feed.base.amount * 10 ** this.collateral_asset.precision) / (feed.quote.amount * 10 ** this.asset.precision);
       },
       mcr() {
+        if (!this.asset_bitasset_data) return
         return this.asset_bitasset_data.current_feed.maintenance_collateral_ratio / 10
       },
       collateralValueation() {
@@ -162,7 +166,7 @@
         );
       },
       sorted_bids() {
-       return this.collateral_bids.sort(bid => this.bid_ratio(bid.inv_swan_price)).reverse()
+       return this.collateral_bids  //.sort(bid => this.bid_price(bid.inv_swan_price)).reverse()
       },
       bid_debt(p) {
         return (p.quote.amount / 10 ** this.asset.precision);
@@ -184,6 +188,7 @@
         return price.toFixed(4)
       },
       formatAmount(value, currency) {
+        if (!currency) return
         var formatter = new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: currency,
