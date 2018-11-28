@@ -3,7 +3,7 @@
     v-if="loaded"
     :chartData="chart_amount_vs_ratio_cdf"
     :chartLabels="chart_amount_vs_ratio_cdf_labels"
-    yLabel="Amount per Ratio"
+    yLabel="Percentage of supply"
     />
 </template>
 
@@ -44,7 +44,8 @@
       data.unshift({ratio: 0.0, debt: 0.0, collateral: 0.0});
       let points = data.map(x => x.debt)
       let labels = data.map(x => x.ratio);
-      points = this.cumsum(points);
+      let debt_sum = points.reduce((a, b) => a + b);
+      points = this.cumsum(points).map(x => x / debt_sum * 100);
       this.chart_amount_vs_ratio_cdf = points;
       this.chart_amount_vs_ratio_cdf_labels = labels;
       this.loaded = true

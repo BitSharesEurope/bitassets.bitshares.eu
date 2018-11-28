@@ -9,8 +9,15 @@
         No open call positions exist, except for a settlement pool.
       </div>
     </div>
-    <div class="ui two column grid">
-      <div class="column center aligned">
+    <div class="ui two column stackable grid">
+      <div class="column">
+        <h4 class="ui header">
+          <i class="bar chart icon"></i>
+          <div class="content">
+            Settlement Fund
+            <div class="sub header">Collateral in the fund and outstanding supply</div>
+          </div>
+        </h4>
         <table class="ui compact selectable celled striped table">
           <tr>
             <td><strong>Settlement Funds</strong></td>
@@ -32,16 +39,34 @@
             </td>
           </tr>
         </table>
-        <div class="ui small green statistic">
-          <div class="value">{{formatPrecision(settlementPrice, 5)}} {{this.asset.symbol}}/{{this.collateral_asset.symbol}}</div>
-          <div class="label">Settlement Price</div>
-        </div>
-        <div class="ui small green statistic">
-          <div class="value">{{formatPrecision(1/settlementPrice, 5)}} {{this.collateral_asset.symbol}}/{{this.asset.symbol}}</div>
-          <div class="label">Settlement Price (Inv.)</div>
+        <h4 class="ui header">
+          <i class="line chart icon"></i>
+          <div class="content">
+            Settlement Prices
+            <div class="sub header">Valuation of the settlement fund</div>
+          </div>
+        </h4>
+        <div class="ui grid center aligned">
+          <div class="ui small green statistic">
+            <div class="value">{{formatPrecision(settlementPrice, 4)}} {{this.asset.symbol}}/{{this.collateral_asset.symbol}}</div>
+            <div class="value">{{formatPrecision(1/settlementPrice, 4)}} {{this.collateral_asset.symbol}}/{{this.asset.symbol}}</div>
+            <div class="label">Settlement Price</div>
+          </div>
+          <div class="ui divider"></div>
+          <div class="ui small orange statistic">
+            <div class="value">{{collateralValueation}}</div>
+            <div class="label">Collateral valuation per {{asset.symbol}}</div>
+          </div>
         </div>
       </div>
       <div class="column">
+        <h4 class="ui header">
+          <i class="hand paper outline icon"></i>
+          <div class="content">
+            Collateral Bids
+            <div class="sub header">Existing bids for the collateral in the fund</div>
+          </div>
+        </h4>
         <table class="ui compact small stripped table">
           <thead>
             <tr>
@@ -49,6 +74,7 @@
               <th>{{asset.symbol}}</th>
               <th>{{collateral_asset.symbol}}</th>
               <th>Bid Price</th>
+              <th>Ratio</th>
             </tr>
           </thead>
           <template v-for="bid in collateral_bids">
@@ -57,6 +83,7 @@
               <td>{{formatAmount(bid_debt(bid.inv_swan_price), asset.symbol)}}</td>
               <td>{{formatAmount(bid_collateral(bid.inv_swan_price), collateral_asset.symbol)}}</td>
               <td>{{bid_price(bid.inv_swan_price)}} {{asset.symbol}}/{{collateral_asset.symbol}}</td>
+              <td>{{bid_ratio(bid.inv_swan_price)}}x</td>
             </tr>
           </template>
         </table>
@@ -92,6 +119,9 @@
       },
       mcr() {
         return this.asset_bitasset_data.current_feed.maintenance_collateral_ratio / 10
+      },
+      collateralValueation() {
+        return (this.lastPrice() * this.settlement_fund / this.supply ).toFixed(5)
       }
     },
     methods: {
@@ -114,6 +144,16 @@
       bid_price(p) {
         return this.bid_debt(p) / this.bid_collateral(p)
       },
+      bid_ratio(p) {
+        return (this.lastPrice() * this.bid_collateral(p) / this.bid_debt(p) ).toFixed(2)
+      },
+      lastPrice() {
+        if (!this.asset) return;
+        if (!this.collateral_asset) return;
+        if (!this.ticker) return;
+        let price = parseFloat(this.ticker.latest);
+        return price.toFixed(4)
+      },
       formatAmount(value, currency) {
         var formatter = new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -124,11 +164,7 @@
         return formatter.format(value);
       },
       formatPrecision(value, precision) {
-        var formatter = new Intl.NumberFormat('en-US', {
-          maximumFractionDigits: precision,
-          minimumFractionDigits: 2
-        });
-        return formatter.format(value);
+        return value.toFixed(precision)
       }
     },
   }

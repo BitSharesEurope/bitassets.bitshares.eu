@@ -1,6 +1,6 @@
 <template>
  <div v-if="is_loaded()">
-  <div class="ui two column grid">
+  <div class="ui two column stackable grid">
    <div class="column">
     <CallPositionsOverview
      :callPositions="callPositions"
@@ -11,7 +11,22 @@
      />
    </div>
    <div class="column">
+    <h4 class="ui header">
+     <i class="line chart icon"></i>
+     <div class="content">
+      Charts
+      <div class="sub header">Various Charts over Collateral Ratio</div>
+     </div>
+    </h4>
     <sui-tab>
+     <sui-tab-pane title="CDF">
+      <CallPositionsChartRatioVsAmountCDF
+       :callPositions="callPositions"
+       :asset="asset"
+       :collateral_asset="collateral_asset"
+       :settlementPrice=settlementPrice
+       />
+     </sui-tab-pane>
      <sui-tab-pane title="# vs. ratio">
       <CallPositionsChartRatios
        :callPositions="callPositions"
@@ -22,14 +37,6 @@
      </sui-tab-pane>
      <sui-tab-pane title="Amount vs. ratio">
       <CallPositionsChartRatioVsAmount
-       :callPositions="callPositions"
-       :asset="asset"
-       :collateral_asset="collateral_asset"
-       :settlementPrice=settlementPrice
-       />
-     </sui-tab-pane>
-     <sui-tab-pane title="CDF">
-      <CallPositionsChartRatioVsAmountCDF
        :callPositions="callPositions"
        :asset="asset"
        :collateral_asset="collateral_asset"

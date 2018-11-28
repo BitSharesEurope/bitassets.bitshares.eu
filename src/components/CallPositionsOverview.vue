@@ -1,5 +1,12 @@
 <template>
  <div>
+  <h4 class="ui header">
+   <i class="bar chart icon"></i>
+   <div class="content">
+    Asset Details
+    <div class="sub header">Collateralization, Supply, Pricing</div>
+   </div>
+  </h4>
   <table class="ui compact selectable celled striped table">
    <template v-for="(item, index) in mainitems">
     <tr :key="index">
@@ -8,11 +15,20 @@
     </tr>
    </template>
   </table>
-  <div class="ui grid center aligned">
+  <div class="ui grid">
    <div class="column">
-    <div class="ui green statistic">
-     <div class="value">{{this.averageRatio}}</div>
-     <div class="label">Overall Backing Ratio</div>
+    <h4 class="ui header">
+     <i class="line chart icon"></i>
+     <div class="content">
+      Total
+      <div class="sub header">Total Collateralization of {{symbol}}</div>
+     </div>
+    </h4>
+    <div class="ui grid row center aligned">
+     <div class="ui green statistic">
+      <div class="value">{{this.averageRatio}}</div>
+      <div class="label">Overall Backing Ratio</div>
+     </div>
     </div>
    </div>
   </div>

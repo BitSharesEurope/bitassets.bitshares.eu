@@ -40,7 +40,7 @@
                   labelString: "Collateral Ratio"
               },
               ticks: {
-                max: 10,
+                max: 2,
                 min: 0,
                 userCallback: function(label, index, labels) {
                   return label.toFixed(2);
