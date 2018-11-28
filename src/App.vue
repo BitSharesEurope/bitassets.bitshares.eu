@@ -11,11 +11,6 @@
       <span class="font-weight-light">BACKING</span>
      </div>
     </div>
-    <div class="right menu">
-     <div class="item">
-      <div class="ui mini inline loader" :class="{'active': loading}"></div>
-     </div>
-    </div>
    </div>
   </div>
   <div class="ui main container">
@@ -33,6 +28,7 @@
        v-model="symbol"
        placeholder="Select BitAsset"
        id="symbol_dropdown"
+       :loading="loading"
        class="small"
        />
      </div>
@@ -64,7 +60,7 @@ export default {
   },
   data () {
     return {
-      loading: true,
+      loading: false,
       symbol: "",
       enabled_symbols: ["", "USD", "CNY", "EUR"]
     }
