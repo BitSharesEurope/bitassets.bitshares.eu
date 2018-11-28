@@ -14,62 +14,17 @@
    </div>
   </div>
   <div class="ui main container">
-   <div class="row">
-    <p>
-    All details are loaded directly from the Blockchain, no server sitting in
-    between. Please select the bitAsset you want to look more details about.
-    </p>
-    <div class="ui form">
-     <div class="field">
-      <label>bitAsset:</label>
-      <sui-dropdown
-       selection
-       :options="dropdown_options"
-       v-model="symbol"
-       placeholder="Select BitAsset"
-       id="symbol_dropdown"
-       :loading="loading"
-       class="small"
-       />
-     </div>
-    </div>
-   </div>
-   <div class="ui horizontal divider"></div>
-   <div class="row">
-    <AssetSelected :symbol="symbol" v-on:loading="setLoading"/>
-   </div>
+   <router-view></router-view>
   </div>
  </div>
 </template>
 
 <script>
 import 'semantic-ui-css/semantic.min.css';
-import AssetSelected from './components/AssetSelected'
-import LoadingIndicator from './components/LoadingIndicator'
 
 export default {
   name: 'App',
-  components: {
-    AssetSelected,
-    LoadingIndicator,
-  },
-  computed: {
-   dropdown_options() {
-    return this.enabled_symbols.map(x => {return {text: x, value: x}})
-   }
-  },
-  data () {
-    return {
-      loading: false,
-      symbol: "",
-      enabled_symbols: ["", "USD", "CNY", "EUR"]
-    }
-  },
-  methods: {
-    setLoading(loading) {
-      this.loading = loading;
-    }
-  }
+  components: {},
 }
 </script>
 

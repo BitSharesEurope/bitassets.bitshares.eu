@@ -96,7 +96,7 @@
        <th>Ratio</th>
       </tr>
      </thead>
-     <template v-for="bid in get_sorted_bids()">
+     <template v-for="bid in sorted_bids()">
       <tr :key="bid.id">
        <td>{{bid.bidder}}</td>
        <td>{{formatAmount(bid_debt(bid.inv_swan_price), asset.symbol)}}</td>
@@ -161,7 +161,7 @@
           this.collateral_bids
         );
       },
-      get_sorted_bids() {
+      sorted_bids() {
        return this.collateral_bids.sort(bid => this.bid_ratio(bid.inv_swan_price)).reverse()
       },
       bid_debt(p) {
