@@ -42,13 +42,7 @@
     methods: {
       formatPrice(value, precision, currency) {
         if (!currency) return
-        var formatter = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: currency,
-          maximumFractionDigits: precision,
-          minimumFractionDigits: 2
-        });
-        return formatter.format(value);
+        return value.toFixed(precision) + " " + currency;
       }
     },
     computed: {

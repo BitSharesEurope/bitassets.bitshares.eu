@@ -50,12 +50,11 @@
       return {
         loading: false,
         symbol: "",
-        enabled_symbols: ["", "USD", "CNY", "EUR"],
+        enabled_symbols: ["", "USD", "CNY", "EUR", "BTC", "RUBLE", "GOLD", "SILVER"],
       }
     },
     watch: { 
       symbol: function(newVal, oldVal) {
-        console.log('Go to another symbol: ', newVal, ' | was: ', oldVal)
         this.loading = true
         this.$router.push({path: `/${this.symbol}`})
       }

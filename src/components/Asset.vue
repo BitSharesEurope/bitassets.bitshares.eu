@@ -78,6 +78,7 @@
         this.getAssets();
       },
       async getAssets() {
+        if (!this.symbol) return
         let o = await this.chain.getAssetFromSymbols([this.symbol])
           .catch((err) => { console.log(err); });
         o = o[0];

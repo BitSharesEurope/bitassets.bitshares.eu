@@ -189,13 +189,7 @@
       },
       formatAmount(value, currency) {
         if (!currency) return
-        var formatter = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: currency,
-          //maximumFractionDigits: precision,
-          minimumFractionDigits: 2
-        });
-        return formatter.format(value);
+        return value.toFixed(4) + " " + currency;
       },
       formatPrecision(value, precision) {
         return value.toFixed(precision)

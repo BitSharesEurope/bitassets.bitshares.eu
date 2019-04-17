@@ -81,7 +81,7 @@ class Blockchain {
   }
 
   getCallOrders(asset_id="1.3.121") {
-    return this.db_exec("get_call_orders", [asset_id, 2**32-1]);
+    return this.db_exec("get_call_orders", [asset_id, 300]);
     //return this.db_exec("get_call_orders", [asset_id, 1]);
   }
 
